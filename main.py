@@ -12,12 +12,13 @@ SessionLocal = sessionmaker(bind=engine, autoflash=False, autocommit=False)
 
 Base = declarative_base()
 
-class Item(BaseModel):
-    id: int
-    name: str
-    description: Optional[str] = None
-    price: float
-    tax: Optional[float] = None
+class Item(Base):
+    __tablename__ = 'items'
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    price = Column(Float, nullable=False)
+    tax = Column(Float, nullable=True)
 
 items: List[Item] = []
 
