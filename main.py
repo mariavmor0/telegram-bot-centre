@@ -1,5 +1,9 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy.orm import sessionmaker, Session, declarative_base
+
+from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel
+from typing import Optional, Generator
 
 SQLALCHEMY_DATABASE_URL = 'sqlite:///./items.db'
 
@@ -7,22 +11,16 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import declarative_base
-
 Base = declarative_base()
 
 class Item(Base):
-    __tablename__ = 'items'
+    __table_name__ = 'items'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(Float, nullable=True)
     price = Column(Float, nullable=False)
     tax = Column(Float, nullable=True)
-
-from pydantic import BaseModel
-from typing import Optional
 
 class ItemBase(BaseModel):
     name: str
@@ -41,3 +39,4 @@ class ItemOut(ItemBase):
 
     class Config:
         org_mode = True
+
