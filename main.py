@@ -1,9 +1,14 @@
 from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
-from typing import Optional
-from sqlalchemy import Column, Integer, String, Float, create_engine
-from sqlalchemy.ext.mypy.plugin import SQLAlchemyPlugin
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
+from contextlib import asynccontextmanager
+
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+
+from database import SessionLocal, engine
+from models import Base, Item
+from schemas import ItemCreate, ItemUpdate, ItemOut
+
+
 
 SQLALCHEMY_DATABASE_URL = 'sqlite:///./items.db'
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False})
@@ -36,7 +41,11 @@ class ItemUpdate(BaseModel):
 class ItemOut(ItemCreate):
     pass
 
-app = FastAPI
+app = FastAPI()
+
+@app.on_event('startup')
+def on_startup():
+    Base.metadata.create_all(bing=engine)
 
 @app.post('/items')
 async def create_item(item: Item):
