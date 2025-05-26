@@ -1,10 +1,12 @@
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy import Column, Integer, String, Float, create_engine
+from sqlalchemy.ext.mypy.plugin import SQLAlchemyPlugin
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
-app = FastAPI()
+SQLALCHEMY_DATABASE_URL = 'sqlite:///./items.db'
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False})
 
 class Item(BaseModel):
     id: int
