@@ -8,7 +8,10 @@ from database import SessionLocal, engine
 from models import Base, Item
 from schemas import ItemCreate, ItemUpdate, ItemOut
 
-
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    def create_tables():
+        Base.metadata.create_all(bind=engine)
 
 SQLALCHEMY_DATABASE_URL = 'sqlite:///./items.db'
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False})
