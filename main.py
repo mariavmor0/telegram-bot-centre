@@ -14,7 +14,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 class Item(Base):
-    __table_name__ = 'items'
+    __tablename__ = 'items'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
