@@ -1,57 +1,19 @@
 from fastapi import FastAPI, HTTPException, Depends
-from contextlib import asynccontextmanager
-
 from sqlalchemy.orm import Session
-from sqlalchemy import select
-
 from database import SessionLocal, engine
 from models import Base, Item
 from schemas import ItemCreate, ItemUpdate, ItemOut
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    def create_tables():
-        Base.metadata.create_all(bind=engine)
-
-await engine.run_sync(create_tables)
-    yield
-
-SQLALCHEMY_DATABASE_URL = 'sqlite:///./items.db'
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False})
-
-SessionLocal = sessionmaker(bind=engine, autoflash=False, autocommit=False)
-
-Base = declarative_base()
-
-class Item(Base):
-    __tablename__ = 'items'
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    description = Column(String, nullable=True)
-    price = Column(Float, nullable=False)
-    tax = Column(Float, nullable=True)
-
-class ItemCreate(BaseModel):
-    id: int
-    name: str
-    description: Optional[str] = None
-    price: float
-    tax: Optional[float] = None
-
-class ItemUpdate(BaseModel):
-    name: str
-    description: Optional[str] = None
-    price: float
-    tax: Optional[float] = None
-
-class ItemOut(ItemCreate):
-    pass
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-@app.on_event('startup')
-def on_startup():
-    Base.metadata.create_all(bing=engine)
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @app.post('/items')
 async def create_item(item: Item):
