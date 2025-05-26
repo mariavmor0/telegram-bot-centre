@@ -36,6 +36,8 @@ class ItemUpdate(BaseModel):
 class ItemOut(ItemCreate):
     pass
 
+app = FastAPI
+
 @app.post('/items')
 async def create_item(item: Item):
     for existing in items:
