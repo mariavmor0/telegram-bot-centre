@@ -20,7 +20,21 @@ class Item(Base):
     price = Column(Float, nullable=False)
     tax = Column(Float, nullable=True)
 
-items: List[Item] = []
+class ItemCreate(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    price: float
+    tax: Optional[float] = None
+
+class ItemUpdate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    tax: Optional[float] = None
+
+class ItemOut(ItemCreate):
+    pass
 
 @app.post('/items')
 async def create_item(item: Item):
