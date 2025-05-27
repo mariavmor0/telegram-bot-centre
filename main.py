@@ -15,7 +15,7 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/items/", response_model=ItemOut)
+@app.post('/items/', response_model=ItemOut)
 def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db_item = Item(**item.dict())
     db.add(db_item)
@@ -23,19 +23,19 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db.refresh(db_item)
     return db_item
 
-@app.get("/items/{item_id}", response_model=ItemOut)
+@app.get('/items/{item_id}', response_model=ItemOut)
 def read_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == item_id).first()
     if item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=404, detail='Item not found')
     return item
 
 
-@app.put("/items/{item_id}", response_model=ItemOut)
+@app.put('/items/{item_id}', response_model=ItemOut)
 def update_item(item_id: int, new_data: ItemUpdate, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == item_id).first()
     if item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=404, detail='Item not found')
 
     for key, value in new_data.dict(exclude_unset=True).items():
         setattr(item, key, value)
@@ -45,7 +45,7 @@ def update_item(item_id: int, new_data: ItemUpdate, db: Session = Depends(get_db
     return item
 
 
-@app.delete("/items/{item_id}")
+@app.delete('/items/{item_id}')
 def delete_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == item_id).first()
     if item is None:
@@ -53,4 +53,8 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
 
     db.delete(item)
     db.commit()
-    return {"message": "Item deleted"}
+    return {'message': 'Item deleted'}
+
+@app.get('/')
+def read_root():
+    return {'message': 'Hello from FastAPI!'}
