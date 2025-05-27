@@ -5,15 +5,6 @@ from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional, Generator
 
-class Item(Base):
-    __tablename__ = 'items'
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    description = Column(Float, nullable=True)
-    price = Column(Float, nullable=False)
-    tax = Column(Float, nullable=True)
-
 class ItemBase(BaseModel):
     name: str
     description: Optional[str] = None
