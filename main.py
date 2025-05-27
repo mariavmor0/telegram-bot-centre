@@ -6,6 +6,8 @@ from database import SessionLocal, engine
 from models import Base, Item
 from schemas import ItemCreate, ItemUpdate, ItemOut
 
+Base.metadata.create_all(bing=engine)
+
 app = FastAPI()
 
 def get_db():
