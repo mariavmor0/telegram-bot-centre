@@ -30,13 +30,14 @@ def read_item(item_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Item not found")
     return item
 
-@app.put('/items/{item_id}', response_model=ItemOut)
-def update_item(item_id: int, item_update: ItemUpdate, db: Session = Depends(get_db)):
-    item = db.query(Item).filter(Item.id == item_id).first()
-    if not item:
-        raise HTTPException(status_code=404, detail='Item not found')
 
-    for key, value in item_update.dict().items():
+@app.put("/items/{item_id}", response_model=ItemOut)
+def update_item(item_id: int, new_data: ItemUpdate, db: Session = Depends(get_db)):
+    item = db.query(Item).filter(Item.id == item_id).first()
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    for key, value in new_data.dict(exclude_unset=True).items():
         setattr(item, key, value)
 
     db.commit()
