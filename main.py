@@ -23,11 +23,11 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db.refresh(db_item)
     return db_item
 
-@app.get('/items/{item_id}', response_model=ItemOut)
+@app.get("/items/{item_id}", response_model=ItemOut)
 def read_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == item_id).first()
-    if not item:
-        raise HTTPException(status_code=404, detail='Item not found')
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
     return item
 
 @app.put('/items/{item_id}', response_model=ItemOut)
