@@ -13,9 +13,6 @@ class ItemUpdate(BaseModel):
     price: Optional[float]
     tax: Optional[float]
 
-class ItemUpdate(ItemBase):
-    pass
-
 class ItemOut(ItemBase):
     id: int
 
