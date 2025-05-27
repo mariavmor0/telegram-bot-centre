@@ -6,3 +6,6 @@ class ItemBase(BaseModel):
     description: Optional[str] = None
     price: float
     tax: Optional[float] = None
+
+class ItemCreate(ItemBase):
+    pass
