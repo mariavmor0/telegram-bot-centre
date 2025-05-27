@@ -8,11 +8,7 @@ from schemas import ItemCreate, ItemUpdate, ItemOut
 
 app = FastAPI()
 
-@app.on_event('startup')
-def on_startup():
-    Base.metadata.create_all(bing=engine)
-
-def get_db() -> Generator[Session, None, None]:
+def get_db():
     db = SessionLocal()
     try:
         yield db
