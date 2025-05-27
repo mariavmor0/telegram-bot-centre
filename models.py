@@ -6,6 +6,6 @@ class Item(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    description = Column(Float, nullable=True)
+    description = Column(String, nullable=True)
     price = Column(Float, nullable=False)
     tax = Column(Float, nullable=True)
