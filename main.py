@@ -1,27 +1,7 @@
 
-from sqlalchemy.orm import sessionmaker, Session, declarative_base
 
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
-from typing import Optional, Generator
 
-class ItemBase(BaseModel):
-    name: str
-    description: Optional[str] = None
-    price: float
-    tax: Optional[float] = None
 
-class ItemCreate(ItemBase):
-    pass
-
-class ItemUpdate(ItemBase):
-    pass
-
-class ItemOut(ItemBase):
-    id: int
-
-    class Config:
-        org_mode = True
 
 app = FastAPI()
 
