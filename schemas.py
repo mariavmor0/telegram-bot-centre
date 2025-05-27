@@ -13,7 +13,7 @@ class ItemUpdate(BaseModel):
     price: Optional[float]
     tax: Optional[float]
 
-class ItemOut(ItemBase):
+class ItemOut(BaseModel):
     id: int
 
     class Config:
