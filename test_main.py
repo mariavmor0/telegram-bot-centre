@@ -53,17 +53,17 @@ def test_update_item():
     assert update_response.json()['price'] == 15.0
 
 def test_delete_item():
-    post_responce = client.post('/items/', json={
+    post_response = client.post('/items/', json={
         'name': 'To Delete',
         'description': 'To be deleted',
         'price': 3.0,
         'tax': 0.2
     })
-    item_id = post_responce.json()['id']
+    item_id = post_response.json()['id']
 
     delete_response = client.delete(f'/items/{item_id}')
     assert delete_response.status_code == 200
     assert 'has been deleted' in delete_response.json()['message']
 
     get_response = client.get(f'/items/{item_id}')
-    assert get_response.status_code == 200
+    assert get_response.status_code == 404
