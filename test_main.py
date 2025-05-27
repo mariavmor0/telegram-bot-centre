@@ -2,6 +2,10 @@ from http.client import responses
 
 from fastapi.testclient import TestClient
 from main import app
+from models import Base
+from database import engine
+
+Base.metadata.create_all(bind=engine)
 
 client = TestClient(app)
 
@@ -17,7 +21,7 @@ def test_create_item():
     assert response.json()['price'] == 9.99
 
 def test_read_item():
-    response = client.get('/items/')
+    response = client.get(f'/items/{item_id}')
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
