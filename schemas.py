@@ -8,13 +8,17 @@ class ItemCreate(BaseModel):
     tax: Optional[float] = None
 
 class ItemUpdate(BaseModel):
-    name: Optional [str]
+    name: Optional[str]
     description: Optional[str]
     price: Optional[float]
     tax: Optional[float]
 
 class ItemOut(BaseModel):
     id: int
+    name: str
+    description: Optional[str]
+    price: float
+    tax: Optional[float]
 
     class Config:
-        org_mode = True
+        orm_mode = True
