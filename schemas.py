@@ -12,3 +12,9 @@ class ItemCreate(ItemBase):
 
 class ItemUpdate(ItemBase):
     pass
+
+class ItemOut(ItemBase):
+    id: int
+
+    class Config:
+        org_mode = True
