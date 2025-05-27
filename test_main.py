@@ -20,3 +20,16 @@ def test_read_items():
     response = client.get('/items/')
     assert response.status_code == 200
     assert isinstance(response.json(), list)
+
+def test_read_items():
+    post_response = client.post('/items/', json={
+        'name': 'GetTest',
+        'description': 'for GET',
+        'price': 5.5,
+        'tax': 0.5
+    })
+    item_id = post_response.json()['id']
+
+    get_response = client.get(f'/items/{item_id}')
+    assert get_response.status_code == 200
+    assert get_response.json()['id'] == item_id
