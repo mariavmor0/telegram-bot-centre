@@ -1,14 +1,17 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class ItemBase(BaseModel):
+class ItemCreate(BaseModel):
     name: str
     description: Optional[str] = None
     price: float
     tax: Optional[float] = None
 
-class ItemCreate(ItemBase):
-    pass
+class ItemUpdate(BaseModel):
+    name: Optional [str]
+    description: Optional[str]
+    price: Optional[float]
+    tax: Optional[float]
 
 class ItemUpdate(ItemBase):
     pass
