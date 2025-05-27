@@ -16,12 +16,12 @@ def test_create_item():
     assert response.json()['name'] == 'Test item'
     assert response.json()['price'] == 9.99
 
-def test_read_all_items():
+def test_read_item():
     response = client.get('/items/')
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
-def test_read_single_items():
+def test_read_items():
     post_response = client.post('/items/', json={
         'name': 'GetTest',
         'description': 'for GET',
