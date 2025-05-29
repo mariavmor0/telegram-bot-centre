@@ -8,10 +8,10 @@ class ItemCreate(BaseModel):
     tax: Optional[float] = None
 
 class ItemUpdate(BaseModel):
-    name: Optional[str]
-    description: Optional[str]
-    price: Optional[float]
-    tax: Optional[float]
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    tax: Optional[float] = None
 
 class ItemOut(BaseModel):
     id: int
