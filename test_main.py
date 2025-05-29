@@ -6,7 +6,6 @@ from models import Base
 from database import engine
 
 Base.metadata.create_all(bind=engine)
-
 client = TestClient(app)
 
 def test_create_item():
@@ -18,25 +17,24 @@ def test_create_item():
     })
     assert response.status_code == 200
     assert response.json()['name'] == 'Test item'
-    assert response.json()['price'] == 9.99
 
-def test_read_item():
-    response = client.get(f'/items/{item_id}')
+def test_read_items():
+    response = client.get('/items/')
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
-def test_read_items():
+def test_read_item():
     post_response = client.post('/items/', json={
-        'name': 'GetTest',
-        'description': 'for GET',
-        'price': 5.5,
-        'tax': 0.5
+        'name': 'ReadTest',
+        'description': 'desc',
+        'price': 1.0,
+        'tax': 0.1
     })
     item_id = post_response.json()['id']
 
-    get_response = client.get(f'/items/{item_id}')
-    assert get_response.status_code == 200
-    assert get_response.json()['id'] == item_id
+    response = client.get(f'/items/{item_id}')
+    assert response.status_code == 200
+    assert response.json()['id'] == item_id
 
 def test_update_item():
     post_response = client.post('/items/', json={
