@@ -6,7 +6,7 @@ from database import SessionLocal, engine
 from models import Base, Item
 from schemas import ItemCreate, ItemUpdate, ItemOut
 
-Base.metadata.create_all(bing=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -25,7 +25,7 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db.refresh(db_item)
     return db_item
 
-@app.get('/items/{item_id}', response_model=ItemOut)
+@app.get('/items/', response_model=List[ItemOut])
 def read_items(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return db.query(Item).offset(skip).limit(limit).all()
 
@@ -49,7 +49,6 @@ def update_item(item_id: int, new_data: ItemUpdate, db: Session = Depends(get_db
     db.refresh(item)
     return item
 
-
 @app.delete('/items/{item_id}')
 def delete_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == item_id).first()
@@ -58,7 +57,7 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
 
     db.delete(item)
     db.commit()
-    return {'message': 'Item deleted'}
+    return {'message': f'Item with id {item_id} has been deleted'}
 
 @app.get('/')
 def read_root():
