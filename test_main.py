@@ -9,7 +9,7 @@ created_item_id = None
 def test_root():
     response = client.get('/')
     assert response.status_code == 200
-    assert response.json() == {'message': 'hello from FastAPI'}
+    assert response.json() == {'message': 'Hello from FastAPI'}
 
 def test_create_item():
     global created_item_id
