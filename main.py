@@ -62,4 +62,6 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db.refresh(db_item)
     return db_item
 
-
+@app.get('/items/', response_model=List[ItemOut])
+def read_items(skip: int=o, limit: int = 10, db: Session = Depends(get_db)):
+    return db.query(Item).offset(skip).limit(limit).all()
