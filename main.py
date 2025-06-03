@@ -54,3 +54,12 @@ app.get('/')
 def root():
     return {'message': 'hello from FastAPI'}
 
+@app.post('/items/', response_model=ItemOut)
+def create_item(item: ItemCreate, db: Session = Depends(get_db)):
+    db_item = Item(**item.dict())
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+
