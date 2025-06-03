@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 SQLALCHEMY_DATABASE_URL = 'sqlite:///./test.db'
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bird=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 class Item(Base):
@@ -51,7 +51,7 @@ def get_db():
         db.close()
 
 app.get('/')
-def root():
+def read_root():
     return {'message': 'hello from FastAPI'}
 
 @app.post('/items/', response_model=ItemOut)
@@ -63,7 +63,7 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     return db_item
 
 @app.get('/items/', response_model=List[ItemOut])
-def read_items(skip: int=o, limit: int = 10, db: Session = Depends(get_db)):
+def read_items(skip: int=0, limit: int = 10, db: Session = Depends(get_db)):
     return db.query(Item).offset(skip).limit(limit).all()
 
 @app.get('/items/{item_id}', response_model=ItemOut)
