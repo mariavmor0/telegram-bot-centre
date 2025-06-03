@@ -1,3 +1,5 @@
+from http.client import responses
+
 from fastapi.testclient import TestClient
 from main import app
 
@@ -39,3 +41,9 @@ def test_update_item():
     data = response.json()
     assert data['name'] == 'Update Item'
     assert data['price'] == 150.0
+
+def test_delete_item():
+    response = client.delete(f'/items/{created_item_id}')
+    assert response.status_code == 200
+    data = response.json()
+    assert 'has been deleted' in data['message']
