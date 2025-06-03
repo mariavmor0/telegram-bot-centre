@@ -91,5 +91,5 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail='item not found')
     db.delete(item)
     db.commit()
-    return {'message': 'item not found'}
+    return {'message': f'Item {item_id} has been deleted'}
 
