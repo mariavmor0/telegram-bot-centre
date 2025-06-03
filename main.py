@@ -43,3 +43,10 @@ class ItemOut(BaseModel):
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
