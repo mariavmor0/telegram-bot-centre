@@ -29,3 +29,13 @@ def test_read_item():
     data = response.json()
     assert data['id'] == created_item_id
     assert data['name'] == 'Test Item'
+
+def test_update_item():
+    response = client.put(f'/items/{created_item_id}', json={
+        'name': 'Updated Item',
+        'price': 150.0
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data['name'] == 'Update Item'
+    assert data['price'] == 150.0
