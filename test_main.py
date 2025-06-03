@@ -39,7 +39,7 @@ def test_update_item():
     })
     assert response.status_code == 200
     data = response.json()
-    assert data['name'] == 'Update Item'
+    assert data['name'] == 'Updated Item'
     assert data['price'] == 150.0
 
 def test_delete_item():
