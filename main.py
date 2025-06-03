@@ -18,3 +18,24 @@ class Item(Base):
     price = Column(Float, nullable=False)
     tax = Column(Float, nullable=True)
 
+class ItemCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    tax: Optional[float] = None
+
+class ItemUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    tax: Optional[float] = None
+
+class ItemOut(BaseModel):
+    id: int
+    name: str
+    description: Optional[str]
+    price: float
+    tax: Optional[float]
+
+    class Config:
+        orm_mode = True
