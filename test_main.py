@@ -13,7 +13,7 @@ def test_root():
 
 def test_create_item():
     global created_item_id
-    response = client.post('items', json={
+    response = client.post('/items/', json={
        'name': 'Test Item',
         'description': 'A test item',
         'price': 100.0,
