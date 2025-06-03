@@ -52,7 +52,7 @@ def get_db():
 
 app.get('/')
 def read_root():
-    return {'message': 'hello from FastAPI'}
+    return {'message': 'Hello from FastAPI'}
 
 @app.post('/items/', response_model=ItemOut)
 def create_item(item: ItemCreate, db: Session = Depends(get_db)):
