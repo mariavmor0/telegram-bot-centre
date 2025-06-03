@@ -39,3 +39,7 @@ class ItemOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+Base.metadata.create_all(bind=engine)
+app = FastAPI()
+
