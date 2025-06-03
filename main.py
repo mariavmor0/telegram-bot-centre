@@ -50,3 +50,7 @@ def get_db():
     finally:
         db.close()
 
+app.get('/')
+def root():
+    return {'message': 'hello from FastAPI'}
+
