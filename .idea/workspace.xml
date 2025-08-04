@@ -5,18 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d04e45b2-6485-47a5-8a50-a7175e070946" name="Changes" comment="fix of errors">
-      <change afterPath="$PROJECT_DIR$/.idea/FastApiProject.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.studyproject/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.studyproject/task1.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/FastApiProject.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.studyproject/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.studyproject/task1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram-bot/.env" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram-bot/Procfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram-bot/bot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram-bot/requirements.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,8 +33,20 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/tgbot" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;mariavmor0&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/mariavmor0/telegram-bot-centre.git&quot;,
+    &quot;accountId&quot;: &quot;0db397e5-8f7d-4d34-b38d-3577221e3717&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -51,7 +65,7 @@
     "Python.test_main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "main",
     "last_opened_file_path": "/Users/apple/PycharmProjects/FastApiProject",
     "settings.editor.selected.configurable": "org.jetbrains.plugins.gitlab.GitLabSettingsConfigurable"
   }
@@ -61,6 +75,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/telegram-bot" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/.venv/lib" />
       <recent name="$PROJECT_DIR$/.venv" />
