@@ -921,7 +921,7 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 def main():
-    application = ApplicationBuilder.builder().token(TOKEN).build()
+    application = ApplicationBuilder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
