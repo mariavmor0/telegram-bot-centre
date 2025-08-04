@@ -1,4 +1,11 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+import os
+from dotenv import load_dotenv
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ReplyKeyboardMarkup
+)
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -6,8 +13,6 @@ from telegram.ext import (
     ContextTypes,
     ConversationHandler
 )
-import os
-from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
@@ -28,10 +33,34 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
         photo=PHOTO_FILE_ID,
-        caption=welcome_text,
+        caption=(
+            "Здравствуй, дорогой покупатель! На связи Оля, руководитель розничного отдела ООО «ТПК Центр тепла»\n\n"
+            "Этот бот не заменит очной консультации в нашем магазине, но точно поможет понять, какая печь подойдёт именно вам.\n"
+            "После прохождения опроса вас ждёт не только идеальная подборка печей по вашему запросу, но и небольшой сюрприз!"
+        ),
         reply_markup=keyboard
     )
     return ConversationHandler.END
+
+async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = "1. Укажите объем вашей парной:"
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("До 10 м³", callback_data='volume_a')],
+        [InlineKeyboardButton("11-15 м³", callback_data='volume_b')],
+        [InlineKeyboardButton("15-20 м³", callback_data='volume_c')],
+        [InlineKeyboardButton("До 24 м³", callback_data='volume_d')],
+    ])
+    await update.message.reply_text("Давайте начнем заново!\n\n" + text, reply_markup=keyboard)
+    return ASK_VOLUME
+
+async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("Связаться с менеджером", url="https://t.me/ваш_менеджер_username")]
+    ])
+    await update.message.reply_text(
+        "Если у вас остались вопросы или хотите уточнить детали — свяжитесь с нашим менеджером.",
+        reply_markup=keyboard
+    )
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -134,6 +163,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await send_recommendation(update, context)
         return ConversationHandler.END
 
+
 async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_data = context.user_data
     volume = user_data.get("volume")
@@ -143,12 +173,13 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
     layout = user_data.get("layout")
 
     recommendation_sent = False
+
     if (
-        volume == "volume_a" and
-        season == "season_a" and
-        usage == "usage_a" and
-        bath_type in ["bath_a", "bath_c"] and
-        layout == "layout_b"
+            volume == "volume_a" and
+            season == "season_a" and
+            usage == "usage_a" and
+            bath_type in ["bath_a", "bath_c"] and
+            layout == "layout_b"
     ):
         recommendation_sent = True
         photo_id = "AgACAgIAAxkBAAO4aH4g-S4hgwSlr1U_S59Avl8U66sAAs7uMRvqVPlLkzueBs6fjVEBAAMCAAN5AAM2BA"
@@ -158,7 +189,8 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 Можно докомплектовать каменками, баками или кожухами.'''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Огонь»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_12_kub_m_md/")]
+            [InlineKeyboardButton("Печь банная «Огонь»",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_12_kub_m_md/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -184,8 +216,10 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 Также печи серии «Огонь» можно докомплектовать навесными сетками-каменками, навесными баками для воды или конвекционными кожухами.'''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Огонь» с аркой", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_s_arkoy_12_kub_m_md/")],
-            [InlineKeyboardButton("Печь банная «Огонь» с тоннелем", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_12_kub_m_md_tonnel/")]
+            [InlineKeyboardButton("Печь банная «Огонь» с аркой",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_s_arkoy_12_kub_m_md/")],
+            [InlineKeyboardButton("Печь банная «Огонь» с тоннелем",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_12_kub_m_md_tonnel/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -214,7 +248,8 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 Также печи серии «Огонь» можно докомплектовать навесными сетками-каменками, навесными баками для воды или конвекционными кожухами.'''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Огонь» с тоннелем", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_s_tonnelem_18_kub_m_md/")]
+            [InlineKeyboardButton("Печь банная «Огонь» с тоннелем",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_s_tonnelem_18_kub_m_md/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -243,7 +278,8 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 Также печи серии «Огонь» можно докомплектовать навесными сетками-каменками, навесными баками для воды или конвекционными кожухами.'''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Огонь» с тоннелем", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_s_tonnelem_22_kub_m_md/")]
+            [InlineKeyboardButton("Печь банная «Огонь» с тоннелем",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_standart/pech_bannaya_ogon_s_tonnelem_22_kub_m_md/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -271,7 +307,8 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 Печь конвекционная и вот одни из ее главных преимуществ: быстрое прогревание парилки, равномерное распределение тепла, потому что конвекционные потоки распределяют тепло по всей парной, а не только в зоне рядом с печкой, защита от ожогов – закрывает раскалённые стенки топки, снижая риск прикосновения к горячему металлу.
 '''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Remix-15»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_remix_15_konvektsiya_panorama/")]
+            [InlineKeyboardButton("Печь банная «Remix-15»",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_remix_15_konvektsiya_panorama/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -295,7 +332,8 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 Печь конвекционная и вот одни из ее главных преимуществ: быстрое прогревание парилки, равномерное распределение тепла, потому что конвекционные потоки распределяют тепло по всей парной, а не только в зоне рядом с печкой, защита от ожогов – закрывает раскалённые стенки топки, снижая риск прикосновения к горячему металлу.'''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Remix-20»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_remix_20_konvektsiya_panorama/")]
+            [InlineKeyboardButton("Печь банная «Remix-20»",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_remix_20_konvektsiya_panorama/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -319,7 +357,8 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 В конструкции печи отбойник пламени, защищающий от прямого огня и увеличивающий срок службы топки и стартового элемента дымохода. Также внутри дожиг пламени, повышающий эффективность сгорания топлива, экономит дрова и производит меньше дыма. Это значит, что баня – чище, экономичнее и теплее. '''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Евгения» без тоннеля", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_evgeniya_14_kub_m_bez_tonnelya/")]
+            [InlineKeyboardButton("Печь банная «Евгения» без тоннеля",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_evgeniya_14_kub_m_bez_tonnelya/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -337,13 +376,15 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
         recommendation_sent = True
         photo_id = "AgACAgIAAxkBAAIBBmh_hFbP4J3P1lBt5ocZxYveBVH1AAKs9zEb46oAAUigQ1kTxPqFJQEAAwIAA3kAAzYE"
         caption = '''Банная печь серии «Грация» – отличный выбор для тех, кто ценит надёжность и мощность. 
-        
+
 Толщина корпуса печи: 6 мм, толщина дожига пламени (обеспечивает подачу дополнительного воздуха в зону горения, это необходимо для полного сгорания топлива, дрова будут сгорать в топке, а не осаживаться в трубе, забивая её, также это позволит экономичнее использовать печь), отбойника (сделан в форме «уголка» с отверстием для того, чтобы сажа с дымохода ссыпалась прямо в топку и не было необходимости разбирать дымоход для чистки печи) и ребер жесткости (не позволяют топливу гореть рядом, что предотвращает перегрев печи и ее деформацию при максимальных тепловых нагрузках): 8 мм. 
-        
+
 Печь оборудована конвекционным кожухом, обеспечивающим равномерный и быстрый прогрев всей парной и защищающим от ожогов – закрывает раскалённые стенки топки, снижая риск прикосновения к горячему металлу.'''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Грация-20 BLACK со стеклом", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_gratsiya_20_black_so_steklom/")],
-            [InlineKeyboardButton("Грация-20 BLACK", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_gratsiya_20_black/")]
+            [InlineKeyboardButton("Грация-20 BLACK со стеклом",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_gratsiya_20_black_so_steklom/")],
+            [InlineKeyboardButton("Грация-20 BLACK",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_gratsiya_20_black/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -366,8 +407,10 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 Сталь 6 мм, дожиг и отбойник — 8 мм. Конвекционный кожух, быстрый нагрев, равномерное распределение тепла и безопасность. Надёжная и экономичная.'''
 
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Грация-15 BLACK со стеклом", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_gratsiya_15_black_so_steklom/")],
-            [InlineKeyboardButton("Грация-15 BLACK", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_gratsiya_15_black/")]
+            [InlineKeyboardButton("Грация-15 BLACK со стеклом",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_gratsiya_15_black_so_steklom/")],
+            [InlineKeyboardButton("Грация-15 BLACK",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_gratsiya_15_black/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -392,7 +435,8 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 Также внутри дожиг пламени, повышающий эффективность сгорания топлива, экономит дрова и производит меньше дыма. Это значит, что баня - чище, экономичнее и теплее.
 '''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Евгения Лайт»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_evgeniya_layt_10_kub/")]
+            [InlineKeyboardButton("Печь банная «Евгения Лайт»",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_evgeniya_layt_10_kub/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -410,13 +454,15 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
         recommendation_sent = True
         photo_id = "AgACAgIAAxkBAAIBCmh_hF3gmI-xd4kT65JGbgEJYW4kAAIl-DEbrgv4SxJf-3TNifODAQADAgADeQADNgQ"
         caption = '''Печь из серии «Евгения» – идеальный выбор для тех, кто ценит настоящее тепло и комфорт. Эта печь – не просто источник жара, а сердце вашей бани!
-        
+
 Оптимальный баланс между прочностью и теплопередачей. Печь быстро нагревается. Конвекционный кожух равномерно распределяет тепло по парной, что означает меньше времени на прогрев, комфортная температура без перегрева. В конструкции печи отбойник пламени, защищающий от прямого огня и увеличивающий срок службы топки и стартового элемента дымохода. 
 
 Также внутри дожиг пламени, повышающий эффективность сгорания топлива, экономит дрова и производит меньше дыма. Это значит, что баня - чище, экономичнее и теплее.'''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Евгения (дверка со стеклом)", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_evgeniya_14_kub_m_dverka_so_steklom/")],
-            [InlineKeyboardButton("Евгения (дверка без стекла)", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_evgeniya_14_kub_m/")]
+            [InlineKeyboardButton("Евгения (дверка со стеклом)",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_evgeniya_14_kub_m_dverka_so_steklom/")],
+            [InlineKeyboardButton("Евгения (дверка без стекла)",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_konvektsiya_/pech_bannaya_evgeniya_14_kub_m/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -440,8 +486,10 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 Также в топке имеется дожиг пламени, который повышает эффективность сгорания топлива.'''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Деревенская»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_derevenskaya_sostavnaya_bak_nerzh_85_l/")],
-            [InlineKeyboardButton("Печь банная «Русь»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_rus_kruglaya_sostavnaya_bak_nerzh_85_litrov/")]
+            [InlineKeyboardButton("Печь банная «Деревенская»",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_derevenskaya_sostavnaya_bak_nerzh_85_l/")],
+            [InlineKeyboardButton("Печь банная «Русь»",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_rus_kruglaya_sostavnaya_bak_nerzh_85_litrov/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -463,12 +511,13 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
         recommendation_sent = True
         photo_id = "AgACAgIAAxkBAAIBDmh_hGPn2JkWzh2ixqS530WXEjIkAAIn-DEbrgv4S65tBkIsp1m-AQADAgADeQADNgQ"
         caption = '''Печь состоит из двух частей: топки, совмещенной с каменкой и бака из нержавеющей стали. Бак можно повернуть в любую удобную сторону. 
-        
+
 Главной особенностью печи является закрытая каменка, также можно выбрать удобное для вас расположение: слева или справа. Дно топки имеет два гиба, которые не позволяют топливу находиться рядом со стенками печи и деформировать их. 
-    
+
 Также в топке имеется дожиг пламени, который повышает эффективность сгорания топлива. Печь равномерно и быстро прогреет парное помещение и обеспечит мягким паром, создав комфортную температуру.'''
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Печь банная «Сибирячка-24»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_sibiryachka_24/")]
+            [InlineKeyboardButton("Печь банная «Сибирячка-24»",
+                                  url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_sibiryachka_24/")]
         ])
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -489,7 +538,7 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBEGh_hGbBteYmia0xqoEaVIo0EhK_AAIp-DEbrgv4S8dWATjykDu9AQADAgADeQADNgQ",
             caption='''Идеальное готовое решение для бань, где парильное помещение, топочная и моечная находятся в разных комнатах. Она есть в двух вариантах: с левым расположение бака и с правым.
-            
+
 Эта банная печь спроектирована для одновременного обогрева трёх помещений и станет идеальным готовым решением для бань, где парная, мойка и топочная находятся в разных комнатах. Благодаря продуманной конструкции и высоким теплоотдающим характеристикам, она обеспечивает равномерное распределение тепла и комфортную температуру в каждом помещении.
 Печь изготовлена из стали толщиной 8 мм, устойчива к высоким температурам и рассчитана на длительную эксплуатацию. 
 
@@ -497,11 +546,13 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 	•	Быстрый прогрев и длительное удержание тепла
 	•	Надёжная и безопасная конструкция
 	•	Бак для горячей воды в комплекте
-	
+
 Идеальный выбор для тех, кто ценит комфорт, надёжность и экономию пространства в банном комплексе.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("ТРИО (лев)", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_trio_24_kub_md_so_steklom_lev/")],
-                [InlineKeyboardButton("ТРИО (прав)", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_trio_24_kub_md_so_steklom_prav/")]
+                [InlineKeyboardButton("ТРИО (лев)",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_trio_24_kub_md_so_steklom_lev/")],
+                [InlineKeyboardButton("ТРИО (прав)",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_trio_24_kub_md_so_steklom_prav/")]
             ])
         )
 
@@ -518,13 +569,15 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBFGh_hG0e5WPITeF9ILSjA3UBa0QFAAIt-DEbrgv4SwehGpaGS8t4AQADAgADeQADNgQ",
             caption='''Печи этой серии отличаются простотой и надежностью. Печь имеет минимум сварных швов, что говорит о её качестве. 
-        
+
 Верхняя и нижняя плиты имеют гибы. На верхней плите они служат, как ребра жесткости и улучшают нагрев камней. На нижней плите служат, как ребра жесткости и не позволяют углям гореть рядом с боковыми стенками, это предотвращает их перегрев, позволяя углям находиться рядом с колосником, что обеспечивает лучшее горение. На печах этой модели приварен бак для воды, они есть, как с левым баком, так и с правыым. 
-        
+
 Также печи серии «Огонь» можно докомплектовать навесными сетками-каменками или конвекционными кожухами.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Огонь с тоннелем и баком (лев)", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_ogon_s_tonnelem_i_bakom_lev_18_kub_m_md/")],
-                [InlineKeyboardButton("Огонь с тоннелем и баком (прав)", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_ogon_s_tonnelem_i_bakom_prav_18_kub_m_md/")]
+                [InlineKeyboardButton("Огонь с тоннелем и баком (лев)",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_ogon_s_tonnelem_i_bakom_lev_18_kub_m_md/")],
+                [InlineKeyboardButton("Огонь с тоннелем и баком (прав)",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_ogon_s_tonnelem_i_bakom_prav_18_kub_m_md/")]
             ])
         )
 
@@ -541,13 +594,15 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBEmh_hGnAiASW2M0qWAv40KpP-tCFAAIq-DEbrgv4S8Aruws6VlEiAQADAgADeQADNgQ",
             caption='''Печи этой серии отличаются простотой и надежностью. Печь имеет минимум сварных швов, что говорит о её качестве. 
-        
+
 Верхняя и нижняя плиты имеют гибы. На верхней плите они служат, как ребра жесткости и улучшают нагрев камней. На нижней плите служат, как ребра жесткости и не позволяют углям гореть рядом с боковыми стенками, это предотвращает их перегрев, позволяя углям находиться рядом с колосником, что обеспечивает лучшее горение. На печах этой модели приварен бак для воды, они есть, как с левым баком, так и с правыым. 
-        
+
 Также печи серии «Огонь» можно докомплектовать навесными сетками-каменками или конвекционными кожухами.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Огонь с баком (лев)", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_ogon_s_bakom_lev_12_kub_m_md/")],
-                [InlineKeyboardButton("Огонь с баком (прав)", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_ogon_s_bakom_prav_12_kub_m_md/")]
+                [InlineKeyboardButton("Огонь с баком (лев)",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_ogon_s_bakom_lev_12_kub_m_md/")],
+                [InlineKeyboardButton("Огонь с баком (прав)",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_bakom/pech_bannaya_ogon_s_bakom_prav_12_kub_m_md/")]
             ])
         )
 
@@ -563,13 +618,15 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBFmh_hHA3jbl0GIU8DMEaqjknySOAAAIu-DEbrgv4S5I8DJe3yRKRAQADAgADeQADNgQ",
             caption='''Наша новинка с нестандартным дизайном – прекрасный союзник в создании атмосферы и хорошего жара. Создана по образу и подобию нашей «Грации». 
-            
+
 Надёжная печь из нержавеющей стали, быстро прогреет вашу парную и долго будет держать жар. Конструкция печи предусматривает наличие дожига пламени, он обеспечивает подачу дополнительного воздуха в зону горения, это необходимо для полного сгорания топлива, дрова будут сгорать в топке, а не осаживаться в трубе, забивая её, также это позволит экономичнее использовать печь. 
-            
+
 На боковых стенках печи присутствуют ребра жесткости, которые не позволяют топливу гореть рядом, что предотвращает перегрев печи и ее деформацию при максимальных тепловых нагрузках, также обеспечивая равномерный теплообмен.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Remix-15 INOX. Медь", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_remix_15_inox_3mm_setka_panorama_med/")],
-                [InlineKeyboardButton("Remix-15 INOX. Графит", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_remix_15_inox_3mm_setka_panorama_grafit/")]
+                [InlineKeyboardButton("Remix-15 INOX. Медь",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_remix_15_inox_3mm_setka_panorama_med/")],
+                [InlineKeyboardButton("Remix-15 INOX. Графит",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_remix_15_inox_3mm_setka_panorama_grafit/")]
             ])
         )
 
@@ -585,7 +642,7 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBGGh_hSL1h6eGlR8QVghJzflDxcdhAAJL-DEbrgv4S8iaXaNxOvQBAQADAgADeAADNgQ",
             caption='''Горизонтальная банная печь из трубы с сеткой-каменкой — это практичное и эффективное решение для настоящей русской бани. 
-            
+
 Изготовленная из прочной толстостенной, печь отлично держит тепло и равномерно прогревает парную. Конструкция горизонтального типа обеспечивает удобную закладку дров и увеличенную площадь теплообмена. 
 
 В верхней части расположена сетка-каменка, изготовленная из арматуры или металлической сетки — она позволяет закладывать большой объём камней, которые долго сохраняют тепло и создают насыщенный пар. 
@@ -597,7 +654,8 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 Отличный выбор для тех, кто ценит настоящую банную атмосферу и надёжность проверенных конструкций.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Печь «Кельты»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_kelty_16_kub_m_md/")]
+                [InlineKeyboardButton("Печь «Кельты»",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_kelty_16_kub_m_md/")]
             ])
         )
 
@@ -613,15 +671,19 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBGmh_hSZfxrmPNZXtjXeRCs77_wPiAAJM-DEbrgv4Swmf_JCJo8mVAQADAgADeQADNgQ",
             caption='''Банная печь серии «Грация» – отличный выбор для тех, кто ценит надёжность и мощность. 
-            
+
 Толщина корпуса печи: 6 мм, толщина дожига пламени (обеспечивает подачу дополнительного воздуха в зону горения, это необходимо для полного сгорания топлива, дрова будут сгорать в топке, а не осаживаться в трубе, забивая её, также это позволит экономичнее использовать печь), отбойника (сделан в форме «уголка» с отверстием для того, чтобы сажа с дымохода ссыпалась прямо в топку и не было необходимости разбирать дымоход для чистки печи) и ребер жесткости (не позволяют топливу гореть рядом, что предотвращает перегрев печи и ее деформацию при максимальных тепловых нагрузках): 8 мм.
 
 Сетка для камней вмещает около 120 кг камней, усиливая теплоотдачу и улучшая пар. Печь быстро нагревает камни и парную, удерживая стабильную температуру. Эта печь сочетает в себе простоту, качество и продуманную до мелочей конструкцию, обеспечивая парную насыщенным паром, который так ценят любители русской бани.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("«Грация-15» с сеткой", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_gratsiya_15_s_setkoy/")],
-                [InlineKeyboardButton("«Грация-15» с сеткой и стеклом", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_gratsiya_15_s_setkoy_i_steklom/")],
-                [InlineKeyboardButton("«Грация-15» с сеткой «Лист дуба»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_gratsiya_15_s_setkoy_list_duba/")],
-                [InlineKeyboardButton("«Грация-15» с сеткой и стеклом «Лист дуба»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_gratsiya_15_s_setkoy_list_duba_dverka_so_steklom/")]
+                [InlineKeyboardButton("«Грация-15» с сеткой",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_gratsiya_15_s_setkoy/")],
+                [InlineKeyboardButton("«Грация-15» с сеткой и стеклом",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_gratsiya_15_s_setkoy_i_steklom/")],
+                [InlineKeyboardButton("«Грация-15» с сеткой «Лист дуба»",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_gratsiya_15_s_setkoy_list_duba/")],
+                [InlineKeyboardButton("«Грация-15» с сеткой и стеклом «Лист дуба»",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_gratsiya_15_s_setkoy_list_duba_dverka_so_steklom/")]
             ])
         )
 
@@ -637,7 +699,7 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBHGh_hSi_Jqyh9T2g46ItiO8G8aC5AAJO-DEbrgv4S8GhrTuzjvn-AQADAgADeQADNgQ",
             caption='''Горизонтальная банная печь из трубы с сеткой-каменкой — это практичное и эффективное решение для настоящей русской бани. 
-            
+
 Изготовленная из прочной толстостенной, печь отлично держит тепло и равномерно прогревает парную.
 
 Конструкция горизонтального типа обеспечивает удобную закладку дров и увеличенную площадь теплообмена. В верхней части расположена сетка-каменка, изготовленная из арматуры или металлической сетки — она позволяет закладывать большой объём камней, которые долго сохраняют тепло и создают насыщенный пар. 
@@ -649,8 +711,10 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 Отличный выбор для тех, кто ценит настоящую банную атмосферу и надёжность проверенных конструкций.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Онега со стеклом", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_onega_18_kub_m_md_so_steklom/")],
-                [InlineKeyboardButton("Онега обычная", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_onega_18_kub_m_md/")]
+                [InlineKeyboardButton("Онега со стеклом",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_onega_18_kub_m_md_so_steklom/")],
+                [InlineKeyboardButton("Онега обычная",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_onega_18_kub_m_md/")]
             ])
         )
 
@@ -673,10 +737,11 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 	•	мощный прогрев и полноценная каменка;
 	•	качественный пар без перегрева воздуха;
 	•	удобство в эксплуатации и простота монтажа.
-	
+
 Эта модель станет отличным решением для тех, кто ценит надёжность, тепло и настоящий банный дух.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Печь банная «Славянка»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_slavyanka_14_kub_m_md/")]
+                [InlineKeyboardButton("Печь банная «Славянка»",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_slavyanka_14_kub_m_md/")]
             ])
         )
 
@@ -699,17 +764,18 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 	•	мощный прогрев и полноценная каменка;
 	•	качественный пар без перегрева воздуха;
 	•	удобство в эксплуатации и простота монтажа.
-	
+
 Эта модель станет отличным решением для тех, кто ценит надёжность, тепло и настоящий банный дух.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Печь банная «Славянка»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_slavyanka_12_kub_m_md/")]
+                [InlineKeyboardButton("Печь банная «Славянка»",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_setkoy/pech_bannaya_slavyanka_12_kub_m_md/")]
             ])
         )
 
     if (
             volume in ["volume_b", "volume_c"] and
             season in ["season_a", "season_b"] and
-            usage == ["usage_a", "usage_b"] and
+            usage in ["usage_a", "usage_b"] and
             bath_type in ["bath_b", "bath_c"] and
             layout in ["layout_a", "layout_c"]
     ):
@@ -727,7 +793,8 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 • Стабильная температура и отсутствие перегрева воздуха обеспечивают комфортное и равномерное прогревание
 • Компактность и простота установки''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Печь банная «Remix-18»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_remix_18_reguliruemaya_konvektsiya_panorama_zakrytaya_kamenka/")]
+                [InlineKeyboardButton("Печь банная «Remix-18»",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_remix_18_reguliruemaya_konvektsiya_panorama_zakrytaya_kamenka/")]
             ])
         )
 
@@ -743,13 +810,14 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBJmh_hTtwSc8icN9yMkkk6NX1baONAAJX-DEbrgv4S1GU-4fCgiJeAQADAgADeQADNgQ",
             caption='''Банная печь из нержавеющей стали с закрытой каменкой и сеткой – мощь, стиль и долговечность для вашей парной.
-            
+
 Эта банная печь сочетает в себе надежность высококачественной нержавеющей стали и продуманную конструкцию для создания настоящего «лёгкого» пара. 
 Внешняя сетка для камней не только усиливает теплоотдачу и удерживает жар, но и служит декоративным элементом, придающим печи современный внешний вид. Сетка позволяет разместить дополнительное количество камней, а значит – дольше сохранять тепло и получать больше пара без перегрева воздуха.
 
 Печь устойчива к коррозии, перепадам температур и рассчитана на долгий срок службы даже при регулярной эксплуатации. Идеальный выбор для тех, кто ценит настоящую баню и не готов идти на компромиссы в качестве.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Печь «DUBOK-20» INOX", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_dubok_20_inox_3_mm_s_zakrytoy_kamenkoy/")]
+                [InlineKeyboardButton("Печь «DUBOK-20» INOX",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_dubok_20_inox_3_mm_s_zakrytoy_kamenkoy/")]
             ])
         )
 
@@ -765,14 +833,15 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBJmh_hTtwSc8icN9yMkkk6NX1baONAAJX-DEbrgv4S1GU-4fCgiJeAQADAgADeQADNgQ",
             caption='''Эта компактная банная печь идеально сочетает в себе стиль, надежность и практичность.
-            
+
 Особенности конструкции:
 	•	Закрытая каменка – обеспечивает мягкий пар. Камни нагреваются до высокой температуры, а подача воды внутрь каменки даёт пар без перегрева воздуха.
 	•	Сетка для камней – размещается вокруг корпуса печи и увеличивает теплоотдачу, аккумулируя тепло. Дополнительно она играет декоративную роль и повышает безопасность, защищая от случайных ожогов.
 	•	Толщина стенок 4 мм – оптимальный баланс между быстрым нагревом и долговечностью. Печь быстро выходит на рабочий режим и долго сохраняет тепло.
 	•	Компактные размеры – печь не занимает много места, что удобно для ограниченного пространства дачной бани.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Печь «DUBOK-12» INOX", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_dubok_12_inox_3_mm_s_zakrytoy_kamenkoy/")]
+                [InlineKeyboardButton("Печь «DUBOK-12» INOX",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_dubok_12_inox_3_mm_s_zakrytoy_kamenkoy/")]
             ])
         )
 
@@ -788,13 +857,14 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBJmh_hTtwSc8icN9yMkkk6NX1baONAAJX-DEbrgv4S1GU-4fCgiJeAQADAgADeQADNgQ",
             caption='''Банная печь из нержавеющей стали с закрытой каменкой и сеткой – мощь, стиль и долговечность для вашей парной.
-            
+
 Эта банная печь сочетает в себе надежность высококачественной нержавеющей стали и продуманную конструкцию для создания настоящего «лёгкого» пара. 
 Внешняя сетка для камней не только усиливает теплоотдачу и удерживает жар, но и служит декоративным элементом, придающим печи современный внешний вид. Сетка позволяет разместить дополнительное количество камней, а значит – дольше сохранять тепло и получать больше пара без перегрева воздуха.
 
 Печь устойчива к коррозии, перепадам температур и рассчитана на долгий срок службы даже при регулярной эксплуатации. Идеальный выбор для тех, кто ценит настоящую баню и не готов идти на компромиссы в качестве.''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Печь «DUBOK-16» INOX", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_dubok_16_inox_3_mm_s_zakrytoy_kamenkoy/")]
+                [InlineKeyboardButton("Печь «DUBOK-16» INOX",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_dubok_16_inox_3_mm_s_zakrytoy_kamenkoy/")]
             ])
         )
     if (
@@ -809,14 +879,15 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             chat_id=update.effective_chat.id,
             photo="AgACAgIAAxkBAAIBJGh_hTLahOjrM-DrYqt4Nj0oYHJ3AAJV-DEbrgv4SyTrmmn7KvBzAQADAgADeAADNgQ",
             caption='''Банная печь из нержавеющей стали с закрытой каменкой и сеткой – мощь, стиль и долговечность для вашей парной.
-            
+
 Эта банная печь сочетает в себе надежность высококачественной нержавеющей стали и продуманную конструкцию для создания настоящего «лёгкого» пара. 
 Внешняя сетка для камней не только усиливает теплоотдачу и удерживает жар, но и служит декоративным элементом, придающим печи современный внешний вид. Сетка позволяет разместить дополнительное количество камней, а значит – дольше сохранять тепло и получать больше пара без перегрева воздуха.
 
 Печь устойчива к коррозии, перепадам температур и рассчитана на долгий срок службы даже при регулярной эксплуатации. Идеальный выбор для тех, кто ценит настоящую баню и не готов идти на компромиссы в качестве.
 ''',
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Печь «Дубок-12»", url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_dubok_12_4_mm_s_zakrytoy_kamenkoy/")]
+                [InlineKeyboardButton("Печь «Дубок-12»",
+                                      url="https://www.center-tepla.ru/catalog/pechi_dlya_bani/pechi_dlya_bani_s_zakrytoy_kamenkoy/pech_bannaya_dubok_12_4_mm_s_zakrytoy_kamenkoy/")]
             ])
         )
     if recommendation_sent:
@@ -846,11 +917,14 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
             ])
         )
 
+
 def main():
+    print("main() запущен")
     app = Application.builder().token(TOKEN).build()
+    print("Приложение собрано")
 
     conv_handler = ConversationHandler(
-        entry_points=[CallbackQueryHandler(button_handler, pattern="^start_survey$")],
+        entry_points=[CommandHandler("start", start)],
         states={
             ASK_VOLUME: [CallbackQueryHandler(button_handler)],
             ASK_SEASON: [CallbackQueryHandler(button_handler)],
@@ -861,12 +935,19 @@ def main():
         fallbacks=[]
     )
 
-    app.add_handler(CommandHandler("start", start))
     app.add_handler(conv_handler)
-    app.add_handler(CallbackQueryHandler(button_handler))
-
-    print("Бот запущен...")
+    app.add_handler(CommandHandler("restart", restart))
+    app.add_handler(CommandHandler("message", message_handler))
+    app.add_handler(CallbackQueryHandler(button_handler))  # Общий для кнопок
     app.run_polling()
 
-if __name__ == "__main__":
-    main()
+    if __name__ == "__main__":
+        application = Application.builder().token(TOKEN).build()
+
+        application.add_handler(CommandHandler("start", start))
+        application.add_handler(CommandHandler("restart", restart))
+        application.add_handler(CommandHandler("message", message_handler))
+        application.add_handler(CallbackQueryHandler(button_handler))
+
+        print("Бот запущен")
+        application.run_polling()
