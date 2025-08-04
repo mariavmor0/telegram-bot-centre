@@ -1,1 +1,1 @@
-worker: python telegram-bot/bot.py
+worker: python tgbot/bot.py

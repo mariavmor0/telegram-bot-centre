@@ -7,7 +7,7 @@ from telegram import (
     ReplyKeyboardMarkup
 )
 from telegram.ext import (
-    Application,
+    ApplicationBuilder,
     CommandHandler,
     CallbackQueryHandler,
     ContextTypes,
@@ -921,7 +921,7 @@ async def send_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 def main():
-    application = Application.builder().token(TOKEN).build()
+    application = ApplicationBuilder.builder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
